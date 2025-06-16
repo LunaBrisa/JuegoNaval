@@ -34,5 +34,27 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+Route::get('/crear-partida', function () {
+    return Inertia::render('CrearPartida');
+})->middleware(['auth', 'verified'])->name('crear.partida');
+
+Route::get('/Mis-partidas', function () {
+    return Inertia::render('MisPartidas', [
+        'usuario' => Auth::user(), // Usuario autenticado
+        'partidas' => [
+            ['enemigo' => 'Pirata Morgan'],
+            ['enemigo' => 'Capitana Ancla']
+        ]
+    ]);
+    })->middleware(['auth', 'verified'])->name('mis.partidas');
+
+    Route::get('/historial', function () {
+    return Inertia::render('Historial');
+})->middleware(['auth', 'verified'])->name('historial');
+
+Route::get('/graficas', function () {
+    return Inertia::render('Graficas');
+})->middleware(['auth', 'verified'])->name('graficas');
+
 
 require __DIR__.'/auth.php';
