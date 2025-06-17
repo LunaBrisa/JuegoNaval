@@ -1,116 +1,165 @@
 <template>
   <div class="naval-menu-container">
-    <div class="naval-menu-box">
-      <div class="naval-options">
-        <button class="naval-option" @click="$emit('nueva-partida')">
-          <span class="option-icon">🚢</span>
-          <span class="option-text">Nueva Partida</span>
-        </button>
+    <!-- Fondo animado igual que en el layout -->
+    <div class="naval-background">
+      <div class="waves"></div>
+      <div class="waves"></div>
+      <div class="waves"></div>
+      <div class="ship"></div>
+      <div class="ship ship-2"></div>
+    </div>
 
-        <button class="naval-option" @click="$emit('mis-partidas')">
-          <span class="option-icon">📋</span>
-          <span class="option-text">Mis Partidas</span>
-        </button>
+    <!-- Menú de opciones -->
+    <div class="naval-options">
+      <button 
+        class="naval-option neon-blue"
+        @click="$emit('nueva-partida')"
+      >
+        <span class="option-icon">🚢</span>
+        <span class="option-text">Nueva Partida</span>
+      </button>
 
-        <button class="naval-option" @click="$emit('unirse-partida')">
-          <span class="option-icon">🤝</span>
-          <span class="option-text">Unirse a Partida</span>
-        </button>
+      <button 
+        class="naval-option neon-green"
+        @click="$emit('mis-partidas')"
+      >
+        <span class="option-icon">📋</span>
+        <span class="option-text">Mis Partidas</span>
+      </button>
 
-        <button class="naval-option" @click="$emit('historial')">
-          <span class="option-icon">🏆</span>
-          <span class="option-text">Historial</span>
-        </button>
-      </div>
+      <button 
+        class="naval-option neon-purple"
+        @click="$emit('unirse-partida')"
+      >
+        <span class="option-icon">🤝</span>
+        <span class="option-text">Unirse a Partida</span>
+      </button>
 
-      <div class="naval-footer">
-        <p>¡Prepara tus barcos para la batalla!</p>
-      </div>
+      <button 
+        class="naval-option neon-red"
+        @click="$emit('historial')"
+      >
+        <span class="option-icon">🏆</span>
+        <span class="option-text">Historial</span>
+      </button>
     </div>
   </div>
 </template>
 
-<style>
+<style scoped>
 .naval-menu-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+}
+
+/* Reutilizando estilos del fondo del layout */
+.naval-background {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
+  z-index: 0;
 }
 
-.naval-menu-box {
-  background: rgba(255, 255, 255, 0.92);
-  padding: 3rem;
-  border-radius: 15px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  border: 4px solid #0a4e9b;
-  backdrop-filter: blur(5px);
-  width: 90%;
-  max-width: 700px;
-}
-
+/* Opciones del menú */
 .naval-options {
+  position: relative;
+  z-index: 2;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
-  margin: 3rem 0;
+  max-width: 800px;
+  padding: 2rem;
 }
 
 .naval-option {
+  position: relative;
+  border: none;
+  border-radius: 15px;
+  padding: 2rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s;
+  min-height: 150px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 1.8rem;
-  background: linear-gradient(145deg, #0a4e9b, #0082a1);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  min-height: 140px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(5px);
+}
+
+/* Efectos neon */
+.neon-blue {
+  background: rgba(0, 42, 85, 0.5);
+  border: 2px solid #00d4ff;
+  box-shadow: 0 0 15px #00d4ff, inset 0 0 10px #00d4ff;
+  color: #00d4ff;
+}
+
+.neon-green {
+  background: rgba(0, 85, 42, 0.5);
+  border: 2px solid #00ff88;
+  box-shadow: 0 0 15px #00ff88, inset 0 0 10px #00ff88;
+  color: #00ff88;
+}
+
+.neon-purple {
+  background: rgba(85, 0, 85, 0.5);
+  border: 2px solid #b300ff;
+  box-shadow: 0 0 15px #b300ff, inset 0 0 10px #b300ff;
+  color: #b300ff;
+}
+
+.neon-red {
+  background: rgba(85, 0, 42, 0.5);
+  border: 2px solid #ff0055;
+  box-shadow: 0 0 15px #ff0055, inset 0 0 10px #ff0055;
+  color: #ff0055;
 }
 
 .naval-option:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
-  background: linear-gradient(145deg, #00b4db, #0a4e9b);
+  transform: translateY(-5px);
+  box-shadow: 0 0 25px currentColor, inset 0 0 15px currentColor;
 }
 
 .option-icon {
-  font-size: 2.5rem;
-  margin-bottom: 0.8rem;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 5px currentColor);
+  transition: all 0.3s;
+}
+
+.naval-option:hover .option-icon {
+  transform: scale(1.2) rotate(10deg);
 }
 
 .option-text {
   font-size: 1.3rem;
   font-weight: bold;
-  text-align: center;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-.naval-footer {
-  text-align: center;
-  margin-top: 2.5rem;
-  color: #0a4e9b;
-  font-size: 1.3rem;
-  font-weight: bold;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px currentColor;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .naval-menu-box {
-    padding: 2rem;
-    width: 95%;
-  }
-  
   .naval-options {
     grid-template-columns: 1fr;
+    width: 90%;
+  }
+  
+  .option-icon {
+    font-size: 2rem;
+  }
+  
+  .option-text {
+    font-size: 1.1rem;
   }
 }
 </style>

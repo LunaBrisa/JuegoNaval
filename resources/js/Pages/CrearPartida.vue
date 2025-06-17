@@ -1,11 +1,13 @@
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
+import NavalBattleGrid from '@/Components/NavalBattleGrid.vue';
 
 export default {
   components: {
     AuthenticatedLayout,
-    Head
+    Head,
+    NavalBattleGrid
   },
 
   data() {
@@ -44,16 +46,14 @@ export default {
       router.visit('/dashboard');
     },
 
-    colorCelda(celda, esOponente = false) {
-      if (esOponente && celda === 1) return this.colorAgua;
+    onPlayerCellClick({row, col}) {
+      console.log('Celda jugador clickeada:', row, col);
+      // Lógica para colocar barcos
+    },
 
-      switch (celda) {
-        case 0: return this.colorAgua;
-        case 1: return this.colorBarco;
-        case 2: return this.colorFallo;
-        case 3: return this.colorImpacto;
-        default: return 'white';
-      }
+    onOpponentCellClick({row, col}) {
+      console.log('Celda oponente clickeada:', row, col);
+      // Lógica para disparar
     }
   },
 
@@ -71,110 +71,188 @@ export default {
   <AuthenticatedLayout>
     <Head title="Crear Partida" />
 
-    <template #header>
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">Crear Nueva Partida</h2>
-    </template>
-
-    <!-- Estado de búsqueda -->
-    <div class="flex justify-center mb-6">
-      <div v-if="buscandoOponente" class="bg-yellow-100 text-yellow-800 font-semibold px-6 py-3 rounded-full shadow animate-pulse flex items-center gap-1 text-lg">
-        🔎 Buscando oponente
-        <span class="dot">.</span>
-        <span class="dot delay-1">.</span>
-        <span class="dot delay-2">.</span>
-      </div>
-      <div v-else-if="oponenteEncontrado" class="bg-green-100 text-green-800 font-bold px-6 py-3 rounded-full shadow-lg text-lg animate-bounce">
-        ⚔️ ¡Oponente encontrado! Prepárate para la batalla.
-      </div>
+    <!-- Fondo animado naval -->
+    <div class="naval-background">
+      <div class="waves"></div>
+      <div class="waves"></div>
+      <div class="waves"></div>
+      <div class="ship"></div>
+      <div class="ship ship-2"></div>
     </div>
-    <div v-if="oponenteEncontrado" class="flex justify-center mt-4">
-  <div class="battle-scene relative w-full max-w-2xl h-32 overflow-hidden">
-    <!-- Barco izquierdo -->
-    <div class="absolute left-0 bottom-4 text-3xl animate-ship-left">🚢</div>
 
-    <!-- Disparo -->
-    <div class="absolute left-12 bottom-6 text-xl animate-cannonball">💣</div>
-
-    <!-- Explosión -->
-    <div class="absolute left-1/2 bottom-6 text-2xl animate-explosion">💥</div>
-
-    <!-- Disparo de regreso -->
-    <div class="absolute right-12 bottom-10 text-xl animate-cannonball-reverse">💣</div>
-
-    <!-- Barco derecho -->
-    <div class="absolute right-0 bottom-4 text-3xl animate-ship-right">🚢</div>
-  </div>
-  </div>
-
-    <!-- CONTENEDOR de ambos tableros uno al lado del otro -->
-<div class="flex justify-center gap-8 flex-wrap md:flex-nowrap mt-8">
-  <!-- Tablero del jugador -->
-  <div class="bg-blue-100 p-6 rounded-xl shadow-lg border-2 border-blue-300 w-full md:w-1/2">
-    <h3 class="text-lg font-bold mb-4 text-center text-blue-800">🛳️ Mi Flota</h3>
-    <div class="grid grid-cols-8 gap-1 mx-auto" style="width: fit-content;">
-      <div 
-        v-for="(fila, i) in tableroJugador"
-        :key="'jugador-fila-'+i"
-        class="contents"
-      >
-        <div
-          v-for="(celda, j) in fila"
-          :key="'jugador-celda-'+i+'-'+j"
-          class="w-12 h-12 border border-blue-200 rounded-md flex items-center justify-center transition duration-300"
-          :class="{
-            'bg-blue-300': celda === 0,
-            'bg-green-600 text-white': celda === 1,
-            'bg-gray-400': celda === 2,
-            'bg-red-600 animate-ping-slow text-white': celda === 3
-          }"
-        >
-          <span v-if="celda === 1">🚢</span>
-          <span v-else-if="celda === 3">💥</span>
-          <span v-else-if="celda === 2">❌</span>
+    <div class="naval-content-container">
+      <!-- Estado de búsqueda -->
+      <div class="flex justify-center mb-6">
+        <div v-if="buscandoOponente" class="searching-indicator neon-yellow">
+          <span class="option-icon">🔎</span>
+          <span class="option-text">Buscando oponente</span>
+          <span class="dot">.</span>
+          <span class="dot delay-1">.</span>
+          <span class="dot delay-2">.</span>
+        </div>
+        <div v-else-if="oponenteEncontrado" class="found-indicator neon-green">
+          <span class="option-icon">⚔️</span>
+          <span class="option-text">¡Oponente encontrado! Prepárate para la batalla.</span>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Tablero del oponente -->
-  <div class="bg-red-100 p-6 rounded-xl shadow-lg border-2 border-red-300 w-full md:w-1/2">
-    <h3 class="text-lg font-bold mb-4 text-center text-red-800">🎯 Flota Enemiga</h3>
-    <div class="grid grid-cols-8 gap-1 mx-auto" style="width: fit-content;">
-      <div 
-        v-for="(fila, i) in vistaOponente"
-        :key="'oponente-fila-'+i"
-        class="contents"
-      >
-        <div
-          v-for="(celda, j) in fila"
-          :key="'oponente-celda-'+i+'-'+j"
-          class="w-12 h-12 border border-red-200 rounded-md flex items-center justify-center cursor-pointer transition duration-300 hover:scale-105"
-          :class="{
-            'bg-blue-300': celda === 0,
-            'bg-gray-400': celda === 2,
-            'bg-red-600 animate-ping-slow text-white': celda === 3
-          }"
-        >
-          <span v-if="celda === 3">💥</span>
-          <span v-else-if="celda === 2">❌</span>
-        </div>
+      <!-- Escena de batalla animada -->
+      <div v-if="oponenteEncontrado" class="battle-scene">
+        <!-- Barco izquierdo -->
+        <div class="ship-left">🚢</div>
+        <!-- Disparo -->
+        <div class="cannonball">💣</div>
+        <!-- Explosión -->
+        <div class="explosion">💥</div>
+        <!-- Disparo de regreso -->
+        <div class="cannonball-reverse">💣</div>
+        <!-- Barco derecho -->
+        <div class="ship-right">🚢</div>
       </div>
-    </div>
-  </div>
-</div>
 
+      <!-- Componente de tableros de batalla -->
+      <NavalBattleGrid
+        :player-grid="tableroJugador"
+        :opponent-grid="vistaOponente"
+        player-board-class="neon-blue"
+        opponent-board-class="neon-red"
+        @player-cell-click="onPlayerCellClick"
+        @opponent-cell-click="onOpponentCellClick"
+      />
+    </div>
   </AuthenticatedLayout>
 </template>
 
-<style scoped>
-@keyframes ping-slow {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.2); opacity: 0.6; }
-  100% { transform: scale(1); opacity: 1; }
+<style>
+/* Estilos base del contenedor */
+.naval-content-container {
+  position: relative;
+  z-index: 2;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.animate-ping-slow {
-  animation: ping-slow 1s infinite;
+/* Fondo animado (reutilizado del menú) */
+.naval-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+/* Indicadores de estado */
+.searching-indicator,
+.found-indicator {
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  backdrop-filter: blur(5px);
+  margin-bottom: 2rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+.searching-indicator {
+  background: rgba(255, 255, 0, 0.1);
+  border: 2px solid #ffeb3b;
+  box-shadow: 0 0 15px #ffeb3b, inset 0 0 10px #ffeb3b;
+  color: #ffeb3b;
+}
+
+.found-indicator {
+  background: rgba(0, 255, 0, 0.1);
+  border: 2px solid #4caf50;
+  box-shadow: 0 0 15px #4caf50, inset 0 0 10px #4caf50;
+  color: #4caf50;
+  animation: bounce 2s ease infinite;
+}
+
+/* Escena de batalla */
+.battle-scene {
+  position: relative;
+  width: 100%;
+  height: 120px;
+  margin: 2rem 0;
+  overflow: hidden;
+}
+
+.ship-left,
+.ship-right,
+.cannonball,
+.cannonball-reverse,
+.explosion {
+  position: absolute;
+  font-size: 2.5rem;
+  filter: drop-shadow(0 0 5px currentColor);
+}
+
+.ship-left {
+  left: 10%;
+  bottom: 20px;
+  animation: ship-float 3s infinite ease-in-out;
+}
+
+.ship-right {
+  right: 10%;
+  bottom: 20px;
+  animation: ship-float 3s infinite ease-in-out reverse;
+}
+
+.cannonball {
+  left: 20%;
+  bottom: 40px;
+  animation: cannon-fire 2s forwards;
+}
+
+.cannonball-reverse {
+  right: 20%;
+  bottom: 40px;
+  animation: cannon-fire-reverse 2s forwards;
+}
+
+.explosion {
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%);
+  animation: explosion 1.5s forwards;
+  z-index: 2;
+}
+
+/* Animaciones */
+@keyframes ship-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes cannon-fire {
+  0% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(300px); opacity: 0; }
+}
+
+@keyframes cannon-fire-reverse {
+  0% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(-300px); opacity: 0; }
+}
+
+@keyframes explosion {
+  0% { transform: translateX(-50%) scale(0.5); opacity: 0; }
+  50% { transform: translateX(-50%) scale(1.5); opacity: 1; }
+  100% { transform: translateX(-50%) scale(1); opacity: 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
 }
 
 .dot {
@@ -194,51 +272,49 @@ export default {
   100% { opacity: 0 }
 }
 
-
-@keyframes cannonball {
-  0% { transform: translateX(0); opacity: 1; }
-  100% { transform: translateX(400px); opacity: 0; }
+/* Efectos neon */
+.neon-blue {
+  background: rgba(0, 42, 85, 0.3);
+  border: 2px solid #00d4ff;
+  box-shadow: 0 0 15px #00d4ff, inset 0 0 10px #00d4ff;
+  color: #00d4ff;
 }
 
-@keyframes cannonball-reverse {
-  0% { transform: translateX(0); opacity: 1; }
-  100% { transform: translateX(-400px); opacity: 0; }
+.neon-red {
+  background: rgba(85, 0, 42, 0.3);
+  border: 2px solid #ff0055;
+  box-shadow: 0 0 15px #ff0055, inset 0 0 10px #ff0055;
+  color: #ff0055;
 }
 
-@keyframes ship-left {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+.neon-green {
+  background: rgba(0, 85, 42, 0.3);
+  border: 2px solid #00ff88;
+  box-shadow: 0 0 15px #00ff88, inset 0 0 10px #00ff88;
+  color: #00ff88;
 }
 
-@keyframes ship-right {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+.neon-yellow {
+  background: rgba(85, 85, 0, 0.3);
+  border: 2px solid #ffeb3b;
+  box-shadow: 0 0 15px #ffeb3b, inset 0 0 10px #ffeb3b;
+  color: #ffeb3b;
 }
 
-@keyframes explosion {
-  0% { transform: scale(0.5); opacity: 0; }
-  50% { transform: scale(1.2); opacity: 1; }
-  100% { transform: scale(1); opacity: 0; }
+/* Responsive */
+@media (max-width: 768px) {
+  .naval-content-container {
+    padding: 1rem;
+  }
+  
+  .searching-indicator,
+  .found-indicator {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .option-icon {
+    font-size: 1.2rem;
+  }
 }
-
-.animate-cannonball {
-  animation: cannonball 1.5s ease-in forwards;
-}
-
-.animate-cannonball-reverse {
-  animation: cannonball-reverse 1.5s ease-in forwards;
-}
-
-.animate-ship-left {
-  animation: ship-left 2s infinite ease-in-out;
-}
-
-.animate-ship-right {
-  animation: ship-right 2s infinite ease-in-out;
-}
-
-.animate-explosion {
-  animation: explosion 1.5s ease-in-out forwards;
-}
-
 </style>

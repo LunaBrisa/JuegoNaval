@@ -41,21 +41,28 @@ export default {
 
 <template>
     <GuestLayout>
-        <Head title="Registro en el Puerto" />
+        <Head title="Registro en la Flota" />
 
         <div class="naval-register-container">
+            <!-- Fondo submarino animado -->
             <div class="naval-background">
-                <div class="waves"></div>
-                <div class="waves"></div>
-                <div class="waves"></div>
-                <div class="ship"></div>
-                <div class="lighthouse"></div>
+                <div class="water-surface"></div>
+                <div class="underwater-bubbles"></div>
+                <div class="submarine"></div>
+                <div class="fish fish-1">🐠</div>
+                <div class="fish fish-2">🐟</div>
+                <div class="sunlight"></div>
+                <div class="treasure-chest">🗝️</div>
             </div>
 
+            <!-- Formulario de registro -->
             <div class="naval-register-box">
                 <div class="naval-header">
-                    <h1>Registro</h1>
-                    <div class="compass-icon">🧭</div>
+                    <div class="naval-logo">
+                        <span class="logo-icon">⚓</span>
+                        <span class="logo-text">Unirse a la Flota</span>
+                    </div>
+                    <p class="naval-subtitle">Registra tu embarcación para comenzar la batalla</p>
                 </div>
 
                 <form @submit.prevent="submit" class="naval-form">
@@ -69,13 +76,13 @@ export default {
                             required
                             autofocus
                             autocomplete="name"
-                            placeholder="Tu nombre completo"
+                            placeholder="Ingresa tu nombre completo"
                         />
                         <InputError class="naval-error" :message="form.errors.name" />
                     </div>
 
                     <div class="naval-input-group">
-                        <InputLabel for="email" value="Correo" class="naval-label" />
+                        <InputLabel for="email" value="Señal de Radio" class="naval-label" />
                         <TextInput
                             id="email"
                             type="email"
@@ -83,13 +90,13 @@ export default {
                             v-model="form.email"
                             required
                             autocomplete="username"
-                            placeholder="Señal de identificación"
+                            placeholder="Tu correo electrónico"
                         />
                         <InputError class="naval-error" :message="form.errors.email" />
                     </div>
 
                     <div class="naval-input-group">
-                        <InputLabel for="password" value="Contraseña" class="naval-label" />
+                        <InputLabel for="password" value="Código Secreto" class="naval-label" />
                         <TextInput
                             id="password"
                             type="password"
@@ -97,13 +104,13 @@ export default {
                             v-model="form.password"
                             required
                             autocomplete="new-password"
-                            placeholder="Contraseña de acceso"
+                            placeholder="Crea una contraseña segura"
                         />
                         <InputError class="naval-error" :message="form.errors.password" />
                     </div>
 
                     <div class="naval-input-group">
-                        <InputLabel for="password_confirmation" value="Confirmar contraseña" class="naval-label" />
+                        <InputLabel for="password_confirmation" value="Confirmar Código" class="naval-label" />
                         <TextInput
                             id="password_confirmation"
                             type="password"
@@ -116,12 +123,23 @@ export default {
                         <InputError class="naval-error" :message="form.errors.password_confirmation" />
                     </div>
 
+                    <div class="naval-terms">
+                        <label class="naval-checkbox-label">
+                            <Checkbox name="terms" v-model:checked="form.terms" required />
+                            <span class="naval-checkbox-text">
+                                Acepto los <a href="#" class="naval-terms-link">Términos del Tratado Naval</a> y la 
+                                <a href="#" class="naval-terms-link">Política de Inteligencia</a>
+                            </span>
+                        </label>
+                        <InputError class="naval-error" :message="form.errors.terms" />
+                    </div>
+
                     <div class="naval-actions">
                         <Link
                             :href="route('login')"
                             class="naval-login-link"
                         >
-                            ¿Ya estás registrado?
+                            ¿Ya tienes una embarcación registrada?
                         </Link>
 
                         <PrimaryButton class="naval-submit" :class="{ 'naval-submit-disabled': form.processing }" :disabled="form.processing">
@@ -136,6 +154,7 @@ export default {
 </template>
 
 <style scoped>
+/* Estilos base */
 .naval-register-container {
     position: fixed;
     top: 0;
@@ -145,124 +164,180 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #1a2a6c, #0a4e9b, #00b4db);
+    background: linear-gradient(to bottom, #0a2463, #3e92cc);
+    font-family: 'Agency FB', 'Arial Narrow', Arial, sans-serif;
     overflow: hidden;
-    font-family: 'Arial', sans-serif;
 }
 
+/* Fondo animado */
 .naval-background {
     position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     z-index: 0;
 }
 
-.waves {
+.water-surface {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to bottom, 
+        rgba(10, 36, 99, 0.8) 0%, 
+        rgba(62, 146, 204, 0.5) 50%, 
+        rgba(10, 36, 99, 0.3) 100%
+    );
+}
+
+.underwater-bubbles {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 100px;
-    background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" fill="%23007cc7"/><path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" fill="%23007cc7"/><path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" fill="%23007cc7"/></svg>');
-    background-size: 1200px 100px;
-    animation: wave 15s linear infinite;
-}
-
-.waves:nth-child(1) {
-    bottom: 0;
-    opacity: 0.5;
-    animation-delay: 0s;
-}
-
-.waves:nth-child(2) {
-    bottom: 10px;
+    height: 100%;
+    background-image: radial-gradient(circle, white 2%, transparent 2%);
+    background-size: 30px 30px;
+    animation: bubbles-float 15s linear infinite;
     opacity: 0.3;
-    animation-delay: -5s;
-    animation-duration: 20s;
 }
 
-.waves:nth-child(3) {
-    bottom: 15px;
-    opacity: 0.2;
-    animation-delay: -2s;
+.submarine {
+    position: absolute;
+    bottom: 15%;
+    left: -200px;
+    width: 200px;
+    height: 80px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="%23ffffff" d="M496 224c-44.2 0-80 35.8-80 80s35.8 80 80 80 80-35.8 80-80-35.8-80-80-80zm-176 80c0-5.3.4-10.6 1.1-15.8-15.5-6.3-32.3-10-49.9-10.5C289.3 264.4 288 256.3 288 248v-16c0-8.3 1.3-16.4 3.2-24.2 17.6-.5 34.4-4.2 49.9-10.5-.7-5.2-1.1-10.5-1.1-15.8 0-61.9 50.1-112 112-112 8.4 0 16.5 1 24.2 2.9C464.4 57.1 480 40.2 480 20c0-11-9-20-20-20-20.2 0-37.1 15.6-39.1 35.8-7.7-1.9-15.8-2.9-24.2-2.9-61.9 0-112 50.1-112 112 0 5.3.4 10.6 1.1 15.8-15.5 6.3-32.3 10-49.9 10.5C286.7 183.6 288 191.7 288 200v16c0 8.3-1.3 16.4-3.2 24.2-17.6.5-34.4 4.2-49.9 10.5.7 5.2 1.1 10.5 1.1 15.8 0 61.9-50.1 112-112 112-8.4 0-16.5-1-24.2-2.9C175.6 374.9 160 391.8 160 412c0 11 9 20 20 20 20.2 0 37.1-15.6 39.1-35.8 7.7 1.9 15.8 2.9 24.2 2.9 61.9 0 112-50.1 112-112 0-5.3-.4-10.6-1.1-15.8 15.5-6.3 32.3-10 49.9-10.5 1.9 7.7 3.2 15.8 3.2 24.2v16c0 8.3-1.3 16.4-3.2 24.2-17.6.5-34.4 4.2-49.9 10.5.7 5.2 1.1 10.5 1.1 15.8zM208 304c-61.9 0-112-50.1-112-112S146.1 80 208 80s112 50.1 112 112-50.1 112-112 112z"/></svg>');
+    background-repeat: no-repeat;
+    background-size: contain;
+    animation: submarine-move 40s linear infinite;
+    filter: drop-shadow(0 0 5px rgba(0, 168, 232, 0.7));
+}
+
+.fish {
+    position: absolute;
+    font-size: 2rem;
+    animation: fish-swim 20s linear infinite;
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.7));
+}
+
+.fish-1 {
+    top: 20%;
+    left: -50px;
+    animation-delay: 0s;
     animation-duration: 25s;
 }
 
-@keyframes wave {
-    0% { background-position-x: 0; }
-    100% { background-position-x: 1200px; }
+.fish-2 {
+    top: 30%;
+    left: -50px;
+    animation-delay: 5s;
+    animation-duration: 30s;
 }
 
-.ship {
+.sunlight {
     position: absolute;
-    bottom: 150px;
-    left: -200px;
-    width: 200px;
-    height: 100px;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="%23ffffff" d="M496.1 384c-8.8 0-16 7.2-16 16s7.2 16 16 16 16-7.2 16-16-7.2-16-16-16zm-144-16c-8.8 0-16 7.2-16 16s7.2 16 16 16 16-7.2 16-16-7.2-16-16-16zm208 0c-8.8 0-16 7.2-16 16s7.2 16 16 16 16-7.2 16-16-7.2-16-16-16zm-80-208c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48h-48V160c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48h-48V160c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H96v-32c0-17.7-14.3-32-32-32H16C7.2 144 0 136.8 0 128s7.2-16 16-16h48c35.3 0 64 28.7 64 64v32h480v-32c0-35.3 28.7-64 64-64h48c8.8 0 16 7.2 16 16s-7.2 16-16 16h-48c-17.7 0-32 14.3-32 32v32H512v-48zM96 352h448c17.7 0 32-14.3 32-32v-96H64v96c0 17.7 14.3 32 32 32zm544-32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64v-96c0-17.7 14.3-32 32-32h576c17.7 0 32 14.3 32 32v96z"/></svg>');
-    background-repeat: no-repeat;
-    background-size: contain;
-    animation: ship 30s linear infinite;
+    top: 0;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    transform: translateX(-50%);
+    animation: sunlight-shimmer 15s ease-in-out infinite alternate;
 }
 
-.lighthouse {
+.treasure-chest {
     position: absolute;
-    right: 50px;
-    bottom: 100px;
-    width: 60px;
-    height: 100px;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="%23ffffff" d="M381.1 44.4c5.1-8.9 4.1-20-2.5-27.7S365.7 0 356.3 0H27.7C18.3 0 8.9 5.7 3.3 13.4S-2 35.5 3.1 44.4L137.6 442.6c5.1 8.9 15 14.6 25.2 14.6s20.1-5.7 25.2-14.6L381.1 44.4zM84.3 80h215.4L192 311.8 84.3 80z"/></svg>');
-    background-repeat: no-repeat;
-    background-size: contain;
-    animation: light 4s infinite alternate;
+    bottom: 10%;
+    right: 10%;
+    font-size: 3rem;
+    animation: treasure-glow 3s ease-in-out infinite alternate;
+    filter: drop-shadow(0 0 5px gold);
 }
 
-@keyframes light {
-    0% { opacity: 0.7; }
-    100% { opacity: 1; }
+/* Animaciones */
+@keyframes bubbles-float {
+    0% { background-position: 0 0; }
+    100% { background-position: 30px 300px; }
 }
 
-@keyframes ship {
-    0% { transform: translateX(-200px); }
-    100% { transform: translateX(calc(100vw + 200px)); }
+@keyframes submarine-move {
+    0% { transform: translateX(-200px) rotateY(0deg); }
+    49% { transform: translateX(calc(100vw + 200px)) rotateY(0deg); }
+    50% { transform: translateX(calc(100vw + 200px)) rotateY(180deg); }
+    99% { transform: translateX(-200px) rotateY(180deg); }
+    100% { transform: translateX(-200px) rotateY(0deg); }
 }
 
+@keyframes fish-swim {
+    0% { transform: translateX(-50px) rotateY(0deg); }
+    49% { transform: translateX(calc(100vw + 50px)) rotateY(0deg); }
+    50% { transform: translateX(calc(100vw + 50px)) rotateY(180deg); }
+    99% { transform: translateX(-50px) rotateY(180deg); }
+    100% { transform: translateX(-50px) rotateY(0deg); }
+}
+
+@keyframes sunlight-shimmer {
+    0% { transform: translateX(-50%) rotate(0deg); }
+    100% { transform: translateX(-50%) rotate(5deg); }
+}
+
+@keyframes treasure-glow {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.1); opacity: 1; }
+}
+
+/* Formulario de registro */
 .naval-register-box {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     width: 100%;
     max-width: 500px;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(0, 42, 99, 0.85);
+    backdrop-filter: blur(10px);
     padding: 2.5rem;
     border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    border: 3px solid #0a4e9b;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(0, 212, 255, 0.5);
+    animation: fadeIn 1s ease-out;
 }
 
 .naval-header {
     text-align: center;
     margin-bottom: 2rem;
-    position: relative;
 }
 
-.naval-header h1 {
-    color: #0a4e9b;
-    font-size: 2rem;
+.naval-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.logo-icon {
+    font-size: 2.5rem;
+    color: #00d4ff;
+    text-shadow: 0 0 10px #00d4ff;
+    animation: float 4s ease-in-out infinite;
+}
+
+.logo-text {
+    font-size: 1.8rem;
     font-weight: bold;
-    margin-bottom: 0.5rem;
+    color: white;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
-.compass-icon {
-    font-size: 2rem;
-    color: #0a4e9b;
-    animation: spin 8s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+.naval-subtitle {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.1rem;
+    margin-bottom: 0;
 }
 
 .naval-form {
@@ -278,35 +353,44 @@ export default {
 .naval-label {
     display: block;
     margin-bottom: 0.5rem;
-    color: #0a4e9b;
+    color: #00d4ff;
     font-weight: bold;
     font-size: 1rem;
+    text-shadow: 0 0 5px rgba(0, 212, 255, 0.5);
 }
 
 .naval-input {
     width: 100%;
-    padding: 0.75rem 1rem;
-    border: 2px solid #0a4e9b;
-    border-radius: 5px;
+    padding: 0.8rem 1.2rem;
+    background: rgba(0, 20, 40, 0.7);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 8px;
     font-size: 1rem;
+    color: white;
     transition: all 0.3s;
-    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.naval-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .naval-input:focus {
     outline: none;
-    border-color: #00b4db;
-    box-shadow: 0 0 0 3px rgba(0, 180, 219, 0.3);
+    border-color: #00ff88;
+    box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.3);
+    background: rgba(0, 30, 60, 0.8);
 }
 
 .naval-error {
-    color: #dc3545;
+    color: #ff6b6b;
     font-size: 0.875rem;
     margin-top: 0.25rem;
+    text-shadow: 0 0 3px rgba(255, 0, 0, 0.3);
 }
 
 .naval-terms {
-    margin: 1rem 0;
+    margin: 1.5rem 0;
 }
 
 .naval-checkbox-label {
@@ -317,18 +401,20 @@ export default {
 
 .naval-checkbox-text {
     margin-left: 0.5rem;
-    color: #0a4e9b;
+    color: rgba(255, 255, 255, 0.8);
     font-size: 0.9rem;
 }
 
 .naval-terms-link {
-    color: #00b4db;
+    color: #00d4ff;
     text-decoration: none;
     font-weight: bold;
+    transition: all 0.3s;
 }
 
 .naval-terms-link:hover {
-    text-decoration: underline;
+    color: #00ff88;
+    text-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
 }
 
 .naval-actions {
@@ -339,36 +425,38 @@ export default {
 }
 
 .naval-login-link {
-    color: #0a4e9b;
+    color: rgba(255, 255, 255, 0.7);
     font-size: 0.9rem;
     text-decoration: none;
-    transition: color 0.3s;
+    transition: all 0.3s;
 }
 
 .naval-login-link:hover {
-    color: #00b4db;
-    text-decoration: underline;
+    color: #00d4ff;
+    text-shadow: 0 0 5px rgba(0, 212, 255, 0.5);
 }
 
 .naval-submit {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.75rem 1.5rem;
-    background-color: #0a4e9b;
+    padding: 0.8rem 1.8rem;
+    background: linear-gradient(135deg, #00a8e8, #0077b6);
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s;
     text-transform: uppercase;
+    box-shadow: 0 4px 15px rgba(0, 168, 232, 0.4);
 }
 
 .naval-submit:hover {
-    background-color: #00b4db;
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, #00b8f8, #0087c6);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 168, 232, 0.6);
 }
 
 .naval-submit:active {
@@ -378,6 +466,7 @@ export default {
 .naval-submit-disabled {
     opacity: 0.7;
     cursor: not-allowed;
+    transform: none !important;
 }
 
 .naval-submit-text {
@@ -386,5 +475,49 @@ export default {
 
 .naval-submit-icon {
     font-size: 1.2rem;
+    animation: bounce 2s infinite;
+}
+
+/* Animaciones adicionales */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .naval-register-box {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+    
+    .naval-logo {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .naval-actions {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .naval-login-link {
+        order: 2;
+    }
+    
+    .naval-submit {
+        order: 1;
+        width: 100%;
+    }
 }
 </style>
